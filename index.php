@@ -121,42 +121,106 @@
             <input type="text" placeholder="Search...">
         </div>
         <div class="input-section">
-            <input type="text" placeholder="First Name">
-            <input type="text" placeholder="Last Name">
-            <button>Save</button>
+            <input type="text" placeholder="First Name" id="fname">
+            <input type="text" placeholder="Last Name" id="lname">
+            <button id="save">Save</button>
         </div>
         <div class="table-section">
-            <table class="user_table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John</td>
-                        <td>Doe</td>
-                        <td><button>Save</button></td>
-                    </tr>
-                    <!-- More rows can be added dynamically -->
-                </tbody>
+            <table id="user_table">
             </table>
         </div>
+        <div id="status-message" style="display:none; text-align: center; margin-top: 10px; padding: 8px; border-radius: 5px;"></div>
     </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            ajax({
-                url: "get_user.php",
-                method: "POST",
-                success: function() {
 
-                }
+            function loadTable() {
+                $.ajax({
+                    url: "get_user.php",
+                    method: "POST",
+                    success: function(data) {
+                        $("#user_table").html(data);
+                    }
+                })
+            }
+            loadTable();
+
+            $("#save").on("click", function() {
+
+                var fname = $("#fname").val();
+                var lname = $("#lname").val();
+
+                $.ajax({
+                    url: "insert_user.php",
+                    method: "POST",
+                    data: {
+                        firstName: fname,
+                        lastName: lname
+                    },
+                    success: function(data) {
+
+                        loadTable();
+
+                        if (data == 1) {
+
+                            $("#status-message").text("data added").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 3000)
+
+                        } else {
+
+                            $("#status-message").text("data addition failed").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 3000)
+
+                        }
+
+                    }
+                })
+
+            })
+
+            $(document).on("click", ".deleteUser", function() {
+                $user_id = $(this).data("id");
+
+                $.ajax({
+                    url: "delete_user.php",
+                    method: "POST",
+                    data: {
+                        id: $user_id
+                    },
+                    success: function(data) {
+
+                        loadTable();
+
+                        if (data == 1) {
+
+                            $("#status-message").text("user deleted").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 4000)
+
+                        } else {
+
+                            $("#status-message").text("user deletion failed").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 4000)
+
+                        }
+
+                    }
+                })
             })
         })
     </script>
