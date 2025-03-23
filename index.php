@@ -112,6 +112,40 @@
         button:hover {
             background: #666;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* These will only apply when modal is shown */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            width: 300px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #333;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -132,6 +166,9 @@
         <div id="status-message" style="display:none; text-align: center; margin-top: 10px; padding: 8px; border-radius: 5px;"></div>
     </div>
 
+    <!-- Modal -->
+    <div id="userModal" class="modal">
+    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -207,7 +244,7 @@
 
                             setTimeout(() => {
                                 $("#status-message").hide();
-                            }, 4000)
+                            }, 3000)
 
                         } else {
 
@@ -215,12 +252,79 @@
 
                             setTimeout(() => {
                                 $("#status-message").hide();
-                            }, 4000)
+                            }, 3000)
 
                         }
 
                     }
                 })
+            })
+
+
+            $(document).on("click", ".editUser", function() {
+                let id = $(this).data("id");
+
+
+                $.ajax({
+                    url: "edit.php",
+                    method: "POST",
+                    data: {
+                        id: id
+                    },
+                    success: function(data) {
+                        $("#userModal").html(data);
+                        $("#userModal").css("display", "flex");
+                    }
+                })
+
+            })
+
+
+
+            $(document).on("click", "#close-modal", function() {
+                $("#userModal").hide();
+            })
+
+            $(document).on("click", "#modal-save", function() {
+                let fname = $("#modal-fname").val();
+                let lname = $("#modal-lname").val();
+                let id = $("#user_id").val();
+
+
+                $.ajax({
+                    url: "update.php",
+                    method: "POST",
+                    data: {
+                        firstname: fname,
+                        lastname: lname,
+                        id: id
+                    },
+                    success: function(data) {
+                        loadTable();
+
+                        $("#userModal").hide();
+
+                        if (data == 1) {
+
+                            $("#status-message").text("user updated").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 3000)
+
+                        } else {
+
+                            $("#status-message").text("user update failed").show();
+
+                            setTimeout(() => {
+                                $("#status-message").hide();
+                            }, 3000)
+
+                        }
+                    }
+                })
+
+
             })
         })
     </script>

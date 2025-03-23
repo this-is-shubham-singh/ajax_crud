@@ -26,7 +26,10 @@ if (mysqli_num_rows($response) > 0) {
                         <td>{$row['id']}</td>
                         <td>{$row['firstName']}</td>
                         <td>{$row['lastName']}</td>
-                        <td><button class='deleteUser' data-id='{$row['id']}'>delete</button></td>
+                        <td>
+                            <button class='editUser' data-id='{$row['id']}'>edit</button>
+                            <button class='deleteUser' data-id='{$row['id']}'>delete</button>
+                        </td>
                     </tr>";
     }
 
